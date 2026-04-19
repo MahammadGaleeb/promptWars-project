@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DarshanFlow — Intelligent Pilgrim Experience Command Center</title>
+    <meta name="description"
+        content="Real-time command center dashboard for DarshanFlow intelligent temple crowd management system">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Top Navigation Bar -->
+    <header id="top-bar">
+        <div class="top-bar-left">
+            <div class="logo-mark">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <circle cx="16" cy="16" r="14" stroke="url(#logoGrad)" stroke-width="2.5" />
+                    <path d="M16 6 L16 26 M10 10 L16 16 L22 10 M10 22 L16 16 L22 22" stroke="url(#logoGrad)"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <defs>
+                        <linearGradient id="logoGrad" x1="0" y1="0" x2="32" y2="32">
+                            <stop stop-color="#6C5CE7" />
+                            <stop offset="1" stop-color="#00B894" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <div class="logo-text">
+                <h1>DarshanFlow</h1>
+                <span class="logo-sub">Command Center</span>
+            </div>
+        </div>
+        <div class="top-bar-center">
+            <div class="status-pill live-pill">
+                <span class="live-dot"></span>
+                <span>LIVE</span>
+            </div>
+            <div class="status-pill" id="system-status-pill">
+                <span>System Nominal</span>
+            </div>
+        </div>
+        <div class="top-bar-right">
+            <div class="clock-widget">
+                <div class="clock-date" id="clock-date"></div>
+                <div class="clock-time" id="clock-time"></div>
+            </div>
+            <div class="weather-widget">
+                <span class="weather-icon">☀️</span>
+                <span class="weather-temp">34°C</span>
+            </div>
+            <div class="devotee-counter">
+                <span class="counter-label">IN VENUE</span>
+                <span class="counter-value" id="total-devotees">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Alert Banner -->
+    <div class="alert-banner" id="alert-banner">
+        <div class="alert-content" id="alert-content"></div>
+    </div>
+
+    <!-- Main Dashboard Grid -->
+    <main id="dashboard">
+
+        <!-- Row 1: Heatmap + Gate Status + Priority Queue -->
+        <section class="card card-heatmap" id="card-heatmap">
+            <div class="card-header">
+                <h2>🗺️ Live Crowd Heatmap</h2>
+                <div class="heatmap-legend">
+                    <span class="legend-item"><span class="legend-dot" style="background:#00b894"></span>Low</span>
+                    <span class="legend-item"><span class="legend-dot" style="background:#fdcb6e"></span>Medium</span>
+                    <span class="legend-item"><span class="legend-dot" style="background:#e17055"></span>High</span>
+                    <span class="legend-item"><span class="legend-dot" style="background:#d63031"></span>Critical</span>
+                </div>
+            </div>
+            <div class="heatmap-container" id="heatmap-container">
+                <canvas id="heatmap-canvas"></canvas>
+                <div class="heatmap-labels" id="heatmap-labels"></div>
+            </div>
+        </section>
+
+        <section class="card card-gates" id="card-gates">
+            <div class="card-header">
+                <h2>🚪 Gate Status</h2>
+                <span class="card-badge" id="gates-active-count">11 Active</span>
+            </div>
+            <div class="gates-list" id="gates-list"></div>
+        </section>
+
+        <section class="card card-priority" id="card-priority">
+            <div class="card-header">
+                <h2>⚡ Priority Queue</h2>
+            </div>
+            <div class="priority-breakdown" id="priority-breakdown"></div>
+            <div class="priority-chart-container">
+                <canvas id="priority-chart"></canvas>
+            </div>
+        </section>
+
+        <!-- Row 2: Wait Time Trend + Alerts + Facilities -->
+        <section class="card card-waittime" id="card-waittime">
+            <div class="card-header">
+                <h2>⏱️ Wait Time Trends</h2>
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-period="1h">1H</button>
+                    <button class="tab-btn" data-period="3h">3H</button>
+                    <button class="tab-btn" data-period="6h">6H</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="waittime-chart"></canvas>
+            </div>
+            <div class="waittime-stats" id="waittime-stats"></div>
+        </section>
+
+        <section class="card card-alerts" id="card-alerts">
+            <div class="card-header">
+                <h2>🚨 Active Alerts</h2>
+                <span class="card-badge alert-badge" id="alert-count">0</span>
+            </div>
+            <div class="alerts-list" id="alerts-list"></div>
+        </section>
+
+        <section class="card card-facilities" id="card-facilities">
+            <div class="card-header">
+                <h2>🏛️ Facilities</h2>
+            </div>
+            <div class="facilities-grid" id="facilities-grid"></div>
+        </section>
+
+        <!-- Row 3: KPI Strip -->
+        <section class="card card-kpi-strip" id="card-kpi-strip">
+            <div class="kpi-item" id="kpi-throughput">
+                <div class="kpi-icon">🚶</div>
+                <div class="kpi-data">
+                    <span class="kpi-value" id="kpi-throughput-val">0</span>
+                    <span class="kpi-label">Darshan/hr</span>
+                </div>
+                <div class="kpi-trend up" id="kpi-throughput-trend">↑ 12%</div>
+            </div>
+            <div class="kpi-item" id="kpi-avg-wait">
+                <div class="kpi-icon">⏳</div>
+                <div class="kpi-data">
+                    <span class="kpi-value" id="kpi-avg-wait-val">0 min</span>
+                    <span class="kpi-label">Avg Wait</span>
+                </div>
+                <div class="kpi-trend down" id="kpi-avg-wait-trend">↓ 8%</div>
+            </div>
+            <div class="kpi-item" id="kpi-satisfaction">
+                <div class="kpi-icon">😊</div>
+                <div class="kpi-data">
+                    <span class="kpi-value" id="kpi-satisfaction-val">0%</span>
+                    <span class="kpi-label">Satisfaction</span>
+                </div>
+                <div class="kpi-trend up" id="kpi-satisfaction-trend">↑ 5%</div>
+            </div>
+            <div class="kpi-item" id="kpi-density">
+                <div class="kpi-icon">👥</div>
+                <div class="kpi-data">
+                    <span class="kpi-value" id="kpi-density-val">0/m²</span>
+                    <span class="kpi-label">Peak Density</span>
+                </div>
+                <div class="kpi-trend neutral" id="kpi-density-trend">— stable</div>
+            </div>
+            <div class="kpi-item" id="kpi-lost">
+                <div class="kpi-icon">🔍</div>
+                <div class="kpi-data">
+                    <span class="kpi-value" id="kpi-lost-val">0</span>
+                    <span class="kpi-label">Lost Persons</span>
+                </div>
+                <div class="kpi-trend neutral" id="kpi-lost-trend">Avg 2.1 min recovery</div>
+            </div>
+            <div class="kpi-item" id="kpi-meals">
+                <div class="kpi-icon">🍽️</div>
+                <div class="kpi-data">
+                    <span class="kpi-value" id="kpi-meals-val">0</span>
+                    <span class="kpi-label">Meals Served</span>
+                </div>
+                <div class="kpi-trend up" id="kpi-meals-trend">↑ on track</div>
+            </div>
+        </section>
+
+        <!-- Row 4: Staff Deployment + Devotee Journey + Flow Simulation -->
+        <section class="card card-staff" id="card-staff">
+            <div class="card-header">
+                <h2>👷 Staff Deployment</h2>
+                <span class="card-badge" id="staff-total">42 Active</span>
+            </div>
+            <div class="staff-grid" id="staff-grid"></div>
+        </section>
+
+        <section class="card card-journey" id="card-journey">
+            <div class="card-header">
+                <h2>🛤️ Devotee Journey Tracker</h2>
+            </div>
+            <div class="journey-pipeline" id="journey-pipeline"></div>
+        </section>
+
+        <section class="card card-flow" id="card-flow">
+            <div class="card-header">
+                <h2>🌊 Flow Rate Monitor</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="flow-chart"></canvas>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="dashboard.js"></script>
+</body>
+
+</html>
