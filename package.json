@@ -1,0 +1,25 @@
+{
+  "name": "darshanflow-command-center",
+  "version": "1.0.0",
+  "description": "DarshanFlow — Intelligent Pilgrim Experience & Crowd Management Command Center Dashboard for large-scale temple environments",
+  "main": "dashboard.js",
+  "scripts": {
+    "dev": "npx serve -l 3000",
+    "start": "npx serve -l 3000",
+    "serve": "npx serve -l 3000"
+  },
+  "keywords": [
+    "crowd-management",
+    "smart-temple",
+    "dashboard",
+    "real-time",
+    "iot",
+    "pilgrim-experience",
+    "darshanflow"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}
